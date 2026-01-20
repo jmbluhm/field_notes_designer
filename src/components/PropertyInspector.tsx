@@ -5,17 +5,17 @@ import { calculateEffectiveDPI, isDPIAdequate } from '../utils';
 import { CollapsibleSection } from './CollapsibleSection';
 import './PropertyInspector.css';
 
-export function PropertyInspector() {
+interface PropertyInspectorProps {
+  side: 'front' | 'back';
+}
+
+export function PropertyInspector({ side }: PropertyInspectorProps) {
   const { selection, getSelectedObject, dispatch } = useDocument();
   const selectedObject = getSelectedObject();
 
-  if (!selectedObject || !selection.side) {
-    return (
-      <div className="property-inspector panel">
-        <div className="panel-title">Properties</div>
-        <p className="no-selection">Select an object to edit its properties</p>
-      </div>
-    );
+  // Only show this inspector if the selection is on this side
+  if (!selectedObject || selection.side !== side) {
+    return null;
   }
 
   const updateObject = (updates: Partial<typeof selectedObject>) => {

@@ -32,7 +32,7 @@ function App() {
               <CoverCanvas side="front" />
             </div>
             <LayersPanel side="front" />
-            <PropertyInspector />
+            <PropertyInspector side="front" />
           </section>
 
           {/* Column B: Back Cover */}
@@ -43,6 +43,7 @@ function App() {
               <CoverCanvas side="back" />
             </div>
             <LayersPanel side="back" />
+            <PropertyInspector side="back" />
           </section>
 
           {/* Column C: Preview & Export */}

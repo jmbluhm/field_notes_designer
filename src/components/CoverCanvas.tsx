@@ -131,25 +131,22 @@ export function CoverCanvas({ side, scale: customScale }: CoverCanvasProps) {
   };
 
   const handleTextDblClick = (obj: TextObject, e: Konva.KonvaEventObject<MouseEvent>) => {
-    const textNode = e.target;
+    const textNode = e.target as Konva.Text;
     const stage = stageRef.current;
-    const viewport = containerRef.current;
-    const stageWrapper = viewport?.querySelector('.cover-canvas-stage-wrapper');
 
-    if (!stage || !stageWrapper || !viewport) return;
+    if (!stage) return;
 
     // Hide the text node while editing
     textNode.hide();
     transformerRef.current?.hide();
 
-    // Get the position of the text node relative to the stage
-    const textPosition = textNode.getClientRect();
-    const wrapperBox = stageWrapper.getBoundingClientRect();
-
-    // Calculate position relative to the stage wrapper (which has the zoom transform)
-    // Account for viewport scroll position since getClientRect returns viewport-relative coords
-    const x = textPosition.x - wrapperBox.left + viewport.scrollLeft;
-    const y = textPosition.y - wrapperBox.top + viewport.scrollTop;
+    // Get the text node's position and size in stage coordinates (not screen coordinates)
+    // The textarea lives inside the same scaled container as the stage, so we use
+    // the unscaled stage coordinates directly
+    const x = textNode.x();
+    const y = textNode.y();
+    const width = textNode.width();
+    const height = textNode.height();
 
     const fontSize = fontSizeToPixels(obj.fontSize, scale);
 
@@ -159,15 +156,15 @@ export function CoverCanvas({ side, scale: customScale }: CoverCanvasProps) {
       position: 'absolute',
       top: y,
       left: x,
-      width: textPosition.width + 4,
-      minHeight: textPosition.height + 4,
-      fontSize: fontSize * zoom,
+      width: width + 4,
+      minHeight: height + 4,
+      fontSize: fontSize,
       fontFamily: obj.fontFamily,
       fontWeight: obj.fontWeight,
       color: obj.fill,
       textAlign: obj.textAlign as React.CSSProperties['textAlign'],
       lineHeight: obj.lineHeight,
-      letterSpacing: obj.letterSpacing * fontSize * zoom,
+      letterSpacing: obj.letterSpacing * fontSize,
       border: '2px solid #4a90d9',
       padding: '0px',
       margin: '0px',
