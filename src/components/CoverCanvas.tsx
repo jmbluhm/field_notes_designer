@@ -133,9 +133,10 @@ export function CoverCanvas({ side, scale: customScale }: CoverCanvasProps) {
   const handleTextDblClick = (obj: TextObject, e: Konva.KonvaEventObject<MouseEvent>) => {
     const textNode = e.target;
     const stage = stageRef.current;
-    const stageWrapper = containerRef.current?.querySelector('.cover-canvas-stage-wrapper');
+    const viewport = containerRef.current;
+    const stageWrapper = viewport?.querySelector('.cover-canvas-stage-wrapper');
 
-    if (!stage || !stageWrapper) return;
+    if (!stage || !stageWrapper || !viewport) return;
 
     // Hide the text node while editing
     textNode.hide();
@@ -143,12 +144,12 @@ export function CoverCanvas({ side, scale: customScale }: CoverCanvasProps) {
 
     // Get the position of the text node relative to the stage
     const textPosition = textNode.getClientRect();
-    const stageBox = stage.container().getBoundingClientRect();
     const wrapperBox = stageWrapper.getBoundingClientRect();
 
     // Calculate position relative to the stage wrapper (which has the zoom transform)
-    const x = textPosition.x - stageBox.left + (stageBox.left - wrapperBox.left);
-    const y = textPosition.y - stageBox.top + (stageBox.top - wrapperBox.top);
+    // Account for viewport scroll position since getClientRect returns viewport-relative coords
+    const x = textPosition.x - wrapperBox.left + viewport.scrollLeft;
+    const y = textPosition.y - wrapperBox.top + viewport.scrollTop;
 
     const fontSize = fontSizeToPixels(obj.fontSize, scale);
 
