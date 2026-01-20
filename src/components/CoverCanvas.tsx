@@ -24,7 +24,11 @@ export function CoverCanvas({ side, scale: customScale }: CoverCanvasProps) {
 
   const [zoom, setZoom] = useState(1);
   const [fitZoom, setFitZoom] = useState(1);
+  const [editingTextId, setEditingTextId] = useState<string | null>(null);
+  const [editingTextValue, setEditingTextValue] = useState('');
+  const [textareaStyle, setTextareaStyle] = useState<React.CSSProperties>({});
   const containerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const stageWidth = inchesToPixels(NOTEBOOK.WIDTH, scale);
   const stageHeight = inchesToPixels(NOTEBOOK.HEIGHT, scale);
@@ -126,6 +130,107 @@ export function CoverCanvas({ side, scale: customScale }: CoverCanvasProps) {
     setSelection({ side, objectId });
   };
 
+  const handleTextDblClick = (obj: TextObject, e: Konva.KonvaEventObject<MouseEvent>) => {
+    const textNode = e.target;
+    const stage = stageRef.current;
+    const stageWrapper = containerRef.current?.querySelector('.cover-canvas-stage-wrapper');
+
+    if (!stage || !stageWrapper) return;
+
+    // Hide the text node while editing
+    textNode.hide();
+    transformerRef.current?.hide();
+
+    // Get the position of the text node relative to the stage
+    const textPosition = textNode.getClientRect();
+    const stageBox = stage.container().getBoundingClientRect();
+    const wrapperBox = stageWrapper.getBoundingClientRect();
+
+    // Calculate position relative to the stage wrapper (which has the zoom transform)
+    const x = textPosition.x - stageBox.left + (stageBox.left - wrapperBox.left);
+    const y = textPosition.y - stageBox.top + (stageBox.top - wrapperBox.top);
+
+    const fontSize = fontSizeToPixels(obj.fontSize, scale);
+
+    setEditingTextId(obj.id);
+    setEditingTextValue(obj.content);
+    setTextareaStyle({
+      position: 'absolute',
+      top: y,
+      left: x,
+      width: textPosition.width + 4,
+      minHeight: textPosition.height + 4,
+      fontSize: fontSize * zoom,
+      fontFamily: obj.fontFamily,
+      fontWeight: obj.fontWeight,
+      color: obj.fill,
+      textAlign: obj.textAlign as React.CSSProperties['textAlign'],
+      lineHeight: obj.lineHeight,
+      letterSpacing: obj.letterSpacing * fontSize * zoom,
+      border: '2px solid #4a90d9',
+      padding: '0px',
+      margin: '0px',
+      overflow: 'hidden',
+      background: 'transparent',
+      outline: 'none',
+      resize: 'none',
+      transformOrigin: 'left top',
+      transform: `rotate(${obj.rotation}deg)`,
+    });
+  };
+
+  const handleTextEditEnd = () => {
+    if (!editingTextId) return;
+
+    // Update the text content
+    dispatch({
+      type: 'UPDATE_OBJECT',
+      side,
+      id: editingTextId,
+      updates: {
+        content: editingTextValue,
+      },
+    });
+
+    // Show the text node again
+    const stage = stageRef.current;
+    if (stage) {
+      const textNode = stage.findOne(`#${editingTextId}`);
+      if (textNode) {
+        textNode.show();
+      }
+    }
+    transformerRef.current?.show();
+
+    setEditingTextId(null);
+    setEditingTextValue('');
+  };
+
+  const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Escape to cancel editing
+    if (e.key === 'Escape') {
+      // Restore original text and close
+      const stage = stageRef.current;
+      if (stage && editingTextId) {
+        const textNode = stage.findOne(`#${editingTextId}`);
+        if (textNode) {
+          textNode.show();
+        }
+      }
+      transformerRef.current?.show();
+      setEditingTextId(null);
+      setEditingTextValue('');
+    }
+  };
+
+  // Focus textarea when editing starts
+  useEffect(() => {
+    if (editingTextId && textareaRef.current) {
+      textareaRef.current.focus();
+      textareaRef.current.select();
+    }
+  }, [editingTextId]);
+
   const handleDragEnd = (objectId: string, e: Konva.KonvaEventObject<DragEvent>) => {
     const node = e.target;
     dispatch({
@@ -212,10 +317,12 @@ export function CoverCanvas({ side, scale: customScale }: CoverCanvasProps) {
         letterSpacing={obj.letterSpacing * fontSize}
         lineHeight={obj.lineHeight}
         rotation={obj.rotation}
-        draggable={!obj.locked && obj.visible}
+        draggable={!obj.locked && obj.visible && !editingTextId}
         visible={obj.visible}
         onClick={() => handleObjectClick(obj.id)}
         onTap={() => handleObjectClick(obj.id)}
+        onDblClick={(e) => handleTextDblClick(obj, e)}
+        onDblTap={(e) => handleTextDblClick(obj, e as unknown as Konva.KonvaEventObject<MouseEvent>)}
         onDragEnd={(e) => handleDragEnd(obj.id, e)}
         onTransformEnd={(e) => handleTransformEnd(obj.id, e)}
       />
@@ -285,6 +392,7 @@ export function CoverCanvas({ side, scale: customScale }: CoverCanvasProps) {
             style={{
               transform: `scale(${zoom})`,
               transformOrigin: 'top left',
+              position: 'relative',
             }}
           >
             <Stage
@@ -360,6 +468,17 @@ export function CoverCanvas({ side, scale: customScale }: CoverCanvasProps) {
                 />
               </Layer>
             </Stage>
+            {/* Inline text editing textarea */}
+            {editingTextId && (
+              <textarea
+                ref={textareaRef}
+                value={editingTextValue}
+                onChange={(e) => setEditingTextValue(e.target.value)}
+                onBlur={handleTextEditEnd}
+                onKeyDown={handleTextareaKeyDown}
+                style={textareaStyle}
+              />
+            )}
           </div>
         </div>
       </div>
