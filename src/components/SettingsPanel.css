@@ -1,0 +1,78 @@
+.settings-panel {
+  flex: 0 1 auto;
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.settings-panel .panel-title {
+  white-space: nowrap;
+}
+
+.settings-panel .hint {
+  display: block;
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-weight: normal;
+  margin-top: 2px;
+}
+
+.dimensions-info {
+  background: var(--bg-tertiary);
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.dim-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.dim-row span:first-child {
+  color: var(--text-secondary);
+}
+
+.button-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reset-btn {
+  background: #5a3a3a;
+}
+
+.reset-btn:hover {
+  background: #7a4a4a;
+}
+
+.remove-btn {
+  background: #5a3a3a;
+  width: 100%;
+}
+
+.remove-btn:hover {
+  background: #7a4a4a;
+}
+
+.wrap-image-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wrap-image-preview {
+  width: 100%;
+  height: 60px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bg-tertiary);
+}
+
+.wrap-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

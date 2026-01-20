@@ -1,0 +1,97 @@
+.property-inspector {
+  flex: 0 1 auto;
+  max-height: 300px;
+  min-height: 60px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.property-inspector textarea {
+  width: 100%;
+  min-height: 60px;
+  resize: vertical;
+  font-family: inherit;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.property-inspector textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.property-inspector select {
+  width: 100%;
+}
+
+.property-inspector input[type="number"] {
+  width: 100%;
+}
+
+.property-inspector input[type="range"] {
+  width: 100%;
+  cursor: pointer;
+}
+
+.no-selection {
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-align: center;
+  padding: 20px;
+}
+
+.button-group {
+  display: flex;
+  gap: 4px;
+}
+
+.button-group button {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.button-group button.active {
+  background: var(--accent);
+}
+
+.dpi-info {
+  padding: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+.dpi-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.dpi-status.ok .dpi-value {
+  color: #4caf50;
+}
+
+.dpi-status.warning .dpi-value {
+  color: #ff9800;
+}
+
+.dpi-value {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.dpi-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.dpi-details {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}

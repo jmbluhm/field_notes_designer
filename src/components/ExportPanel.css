@@ -1,0 +1,45 @@
+.export-panel {
+  flex-shrink: 0;
+}
+
+.export-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.export-info {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.export-info p {
+  margin: 0;
+}
+
+.button-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.export-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.export-btn.primary {
+  background: var(--accent);
+}
+
+.export-btn.primary:hover {
+  background: var(--accent-hover);
+}
+
+.export-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}

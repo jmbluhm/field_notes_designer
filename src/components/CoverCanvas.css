@@ -1,0 +1,26 @@
+.cover-canvas-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.cover-canvas-zoom-controls {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cover-canvas-viewport {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 0;
+}
+
+.cover-canvas-stage-wrapper {
+  flex-shrink: 0;
+}
